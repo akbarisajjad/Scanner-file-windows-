@@ -22,9 +22,11 @@ def get_file_hash(file_path):
             while chunk := file.read(4096):
                 hasher.update(chunk)
         return hasher.hexdigest()
+    except FileNotFoundError:
+        print(f"فایل یافت نشد: {file_path}")
     except Exception as e:
         print(f"خطا در محاسبه هش فایل {file_path}: {e}")
-        return None
+    return None
 
 # ---------- تابع بررسی سلامت فایل ----------
 def check_file_integrity(file_path):
@@ -48,6 +50,8 @@ def check_file_integrity(file_path):
                 with rarfile.RarFile(file_path, 'r') as rar_ref:
                     rar_ref.testrar()
         return "سالم"
+    except (UnidentifiedImageError, ffmpeg.Error, rarfile.Error, zipfile.BadZipFile):
+        return "خراب"
     except Exception as e:
         print(f"خطا در بررسی سلامت فایل {file_path}: {e}")
         return "خراب"
